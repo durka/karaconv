@@ -53,12 +53,13 @@ fn try_main() -> Result<(), Error> {
                 match &caps["type"] {
                     "KeyToKey" => {
                         let fromkey = karaconv::conv_key(parts.next().unwrap())?;
-                        let frommod = if parts.peek().unwrap().starts_with("Modifier") { Some(karaconv::conv_mod(parts.next().unwrap())?) } else { None };
+                        let frommod = if !parts.peek().unwrap().starts_with("Key") { Some(karaconv::conv_mod(parts.next().unwrap())?) } else { None };
 
                         let mut manip = json::Manipulator {
                             type_: "basic".into(),
                             from: json::From::conv(fromkey, frommod),
-                            to: vec![]
+                            to: vec![],
+                            to_if_alone: None,
                         };
 
                         while parts.peek().is_some() {
@@ -75,6 +76,39 @@ fn try_main() -> Result<(), Error> {
                     }
 
                     "KeyOverlaidModifier" => {
+                        let fromkey = karaconv::conv_key(parts.next().unwrap())?;
+                        let frommod = if !parts.peek().unwrap().starts_with("Key") { Some(karaconv::conv_mod(parts.next().unwrap())?) } else { None };
+
+                        let tokey = karaconv::conv_key(parts.next().unwrap())?;
+                        let tomod = if !parts.peek().unwrap().starts_with("Key") { Some(karaconv::conv_mod(parts.next().unwrap())?) } else { None };
+
+                        let mut manip = json::Manipulator {
+                            type_: "basic".into(),
+                            from: json::From::conv(fromkey, frommod),
+                            to: vec![json::To::conv(tokey, tomod)],
+                            to_if_alone: None,
+                        };
+
+                        let evtkey = karaconv::conv_key(parts.next().unwrap())?;
+                        let evtmod = if parts.peek().is_some() {
+                            if !parts.peek().unwrap().starts_with("Key") { Some(karaconv::conv_mod(parts.next().unwrap())?) } else { None }
+                        } else {
+                            None
+                        };
+                        let mut to_if_alone = vec![json::To::conv(evtkey, evtmod)];
+
+                        while parts.peek().is_some() {
+                            let evtkey = karaconv::conv_key(parts.next().unwrap())?;
+                            let evtmod = if parts.peek().is_some() {
+                                if !parts.peek().unwrap().starts_with("Key") { Some(karaconv::conv_mod(parts.next().unwrap())?) } else { None }
+                            } else {
+                                None
+                            };
+                            to_if_alone.push(json::To::conv(evtkey, evtmod));
+                        }
+                        manip.to_if_alone = Some(to_if_alone);
+
+                        rule.manipulators.push(manip);
                     }
 
                     otherwise => bail!("Unsupported autogen type: {}", otherwise)

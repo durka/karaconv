@@ -44,6 +44,8 @@ pub struct Manipulator {
     pub type_: String,
     pub from: From,
     pub to: Vec<To>,
+    #[serde(skip_serializing_if="Option::is_none")]
+    pub to_if_alone: Option<Vec<To>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -51,13 +53,13 @@ pub struct Manipulator {
 pub enum From {
     Key {
         key_code: String,
-        #[serde(skip_serializing_if="FromModifiers::is_empty")]
-        modifiers: FromModifiers,
+        #[serde(skip_serializing_if="Option::is_none")]
+        modifiers: Option<FromModifiers>,
     },
     Button {
         pointing_button: String,
-        #[serde(skip_serializing_if="FromModifiers::is_empty")]
-        modifiers: FromModifiers,
+        #[serde(skip_serializing_if="Option::is_none")]
+        modifiers: Option<FromModifiers>,
     },
 }
 
@@ -69,24 +71,18 @@ pub struct FromModifiers {
     pub optional: Option<Vec<String>>,
 }
 
-impl FromModifiers {
-    fn is_empty(&self) -> bool {
-        self.mandatory.is_none() && self.optional.is_none()
-    }
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum To {
     Key {
         key_code: String,
-        #[serde(skip_serializing_if="Vec::is_empty")]
-        modifiers: Vec<String>,
+        #[serde(skip_serializing_if="Option::is_none")]
+        modifiers: Option<Vec<String>>,
     },
     Button {
         pointing_button: String,
-        #[serde(skip_serializing_if="Vec::is_empty")]
-        modifiers: Vec<String>,
+        #[serde(skip_serializing_if="Option::is_none")]
+        modifiers: Option<Vec<String>>,
     },
 }
 
@@ -105,19 +101,19 @@ impl KeyOrButtonConv for From {
             KeyOrButton::Key(s) =>
                 From::Key {
                     key_code: s,
-                    modifiers: FromModifiers {
+                    modifiers: Some(FromModifiers {
                         mandatory: mods,
                         optional: None,
-                    }
+                    }),
                 },
 
             KeyOrButton::Button(s) =>
                 From::Button {
                     pointing_button: s,
-                    modifiers: FromModifiers {
+                    modifiers: Some(FromModifiers {
                         mandatory: mods,
                         optional: None,
-                    }
+                    }),
                 },
         }
     }
@@ -129,13 +125,13 @@ impl KeyOrButtonConv for To {
             KeyOrButton::Key(s) =>
                 To::Key {
                     key_code: s,
-                    modifiers: mods.unwrap_or(vec![]),
+                    modifiers: Some(mods.unwrap_or(vec![])),
                 },
 
             KeyOrButton::Button(s) =>
                 To::Button {
                     pointing_button: s,
-                    modifiers: mods.unwrap_or(vec![]),
+                    modifiers: Some(mods.unwrap_or(vec![])),
                 },
         }
     }

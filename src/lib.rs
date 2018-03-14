@@ -195,6 +195,7 @@ pub fn conv_mod(s: &str) -> Result<Vec<String>, Error> {
     let mut convs = vec![];
     for m in mods {
         convs.push(match m[1] {
+            "NONE"      => continue,
             "ZERO"      => "zero",
             "CAPSLOCK"  => "caps_lock",
             "SHIFT"     => "left_shift",
