@@ -226,7 +226,7 @@ pub fn collect_keys(s: &str) -> Result<Vec<(json::KeyOrButton, Vec<String>)>, Er
     let mut keys = vec![];
 
     while let Some(thekey) = parts.next().map(conv_key).invert()? {
-        let themod = parts.peeking_next(|p| !p.starts_with("Key"))
+        let themod = parts.peeking_next(|p| p.starts_with("Mod") || p.starts_with("VK"))
                           .map(|p| conv_mod(p)).invert()?
                           .unwrap_or(vec![]);
         keys.push((thekey, themod));
