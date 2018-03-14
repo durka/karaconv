@@ -1,3 +1,5 @@
+//! Utility to convert from Karabiner XML format to Karabiner-Elements JSON format
+
 #[macro_use] extern crate structopt;
 #[macro_use] extern crate failure;
 extern crate serde;
@@ -95,9 +97,13 @@ fn try_main() -> Result<(), Error> {
     if opt.dry_run {
         println!("{}", serde_json::to_string_pretty(&outjson)?);
     } else {
-        let ext = format!("{}.bak.{}", opt.outfile.extension().unwrap().to_str().unwrap(), chrono::Local::now().format("%Y%m%d"));
-        fs::copy(&opt.outfile, opt.outfile.with_extension(ext))?;
+        let outfile_backup = opt.outfile.with_extension(format!("{}.bak.{}",
+                                                                opt.outfile.extension().unwrap().to_str().unwrap(),
+                                                                chrono::Local::now().format("%Y%m%d")));
+        fs::copy(&opt.outfile, &outfile_backup)?;
         serde_json::to_writer_pretty(File::create(&opt.outfile)?, &outjson)?;
+
+        println!("Done! Your old config is backed up at {}.", outfile_backup.display());
     }
 
     Ok(())

@@ -1,3 +1,5 @@
+//! Helper functions for converting from Karabiner XML format to Karabiner-Elements JSON format
+
 #[macro_use] extern crate failure;
 #[macro_use] extern crate serde;
 extern crate itertools;
@@ -11,7 +13,11 @@ use failure::Error;
 use itertools::PeekingNext;
 use result::prelude::*;
 
-pub fn conv_key(s: &str) -> Result<json::KeyOrButton, Error> {
+/// Convert a key code from XML to JSON format
+/// 
+/// The XML format is `KeyCode::$code` or `PointingButton::$code`.
+/// We split off the first part and look up the second in a table.
+fn conv_key(s: &str) -> Result<json::KeyOrButton, Error> {
     use json::KeyOrButton::*;
 
     let parts = s.split("::").map(str::trim).collect::<Vec<_>>();
@@ -179,15 +185,25 @@ pub fn conv_key(s: &str) -> Result<json::KeyOrButton, Error> {
     })
 }
 
-pub fn conv_mod(s: &str) -> Result<Vec<String>, Error> {
-    let mut mods = s.split('|').map(str::trim).map(|s| s.split("::").map(str::trim).collect::<Vec<_>>()).collect::<Vec<_>>();
+/// Convert a modifier flag from XML to JSON format
+/// 
+/// The XML format is a `|`-delimited sequence of `ModifierFlag::$code`.
+/// We look up the codes in a table.
+/// Also, there is a hack to support the old XML format which is VK_code (no `::`).
+fn conv_mod(s: &str) -> Result<Vec<String>, Error> {
+    let mut mods = s.split('|')
+                    .map(str::trim)
+                    .map(|s| s.split("::")
+                              .map(str::trim)
+                              .collect::<Vec<_>>())
+                    .collect::<Vec<_>>();
 
     if mods.is_empty() {
         bail!("Empty modifier");
     } else {
         for m in &mut mods {
             if m[0] != "ModifierFlag" {
-                if m[0].starts_with("VK_") {
+                if m[0].starts_with("VK_") { // old format (fake it into the new one)
                     *m = vec!["ModifierFlag", &m[0][3..]];
                 } else {
                     bail!("Not a modifier: {}", &m[0]);
@@ -221,6 +237,10 @@ pub fn conv_mod(s: &str) -> Result<Vec<String>, Error> {
     Ok(convs)
 }
 
+/// Parse the XML format for a sequence of keys and modifiers
+/// 
+/// The syntax is comma-delimited, with alternating keys and (optional) modifiers:
+/// `key1[, mod1], key2[, mod2] ...`
 pub fn collect_keys(s: &str) -> Result<Vec<(json::KeyOrButton, Vec<String>)>, Error> {
     let mut parts = s.split(',').map(str::trim).peekable();
     let mut keys = vec![];
