@@ -1,11 +1,15 @@
 #[macro_use] extern crate failure;
 #[macro_use] extern crate serde;
+extern crate itertools;
+extern crate result;
 extern crate serde_json;
 
 pub mod xml;
 pub mod json;
 
 use failure::Error;
+use itertools::PeekingNext;
+use result::prelude::*;
 
 pub fn conv_key(s: &str) -> Result<json::KeyOrButton, Error> {
     use json::KeyOrButton::*;
@@ -215,5 +219,19 @@ pub fn conv_mod(s: &str) -> Result<Vec<String>, Error> {
         }.into());
     }
     Ok(convs)
+}
+
+pub fn collect_keys(s: &str) -> Result<Vec<(json::KeyOrButton, Option<Vec<String>>)>, Error> {
+    let mut parts = s.split(',').map(str::trim).peekable();
+    let mut keys = vec![];
+
+    while let Some(thekey) = parts.next().map(conv_key).invert()? {
+        let themod = parts.peeking_next(|p| !p.starts_with("Key"))
+                          .map(|p| conv_mod(p))
+                          .invert()?;
+        keys.push((thekey, themod));
+    }
+    
+    Ok(keys)
 }
 

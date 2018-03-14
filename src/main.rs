@@ -49,66 +49,28 @@ fn try_main() -> Result<(), Error> {
         for key in item.keys {
             let type_regex = Regex::new(r"--(?P<type>[a-zA-Z]+)-- (?P<contents>.*)")?;
             if let Some(caps) = type_regex.captures(&key) {
-                let mut parts = caps["contents"].split(',').map(str::trim).peekable();
+                let mut keys = karaconv::collect_keys(&caps["contents"])?;
+
                 match &caps["type"] {
                     "KeyToKey" => {
-                        let fromkey = karaconv::conv_key(parts.next().unwrap())?;
-                        let frommod = if !parts.peek().unwrap().starts_with("Key") { Some(karaconv::conv_mod(parts.next().unwrap())?) } else { None };
-
-                        let mut manip = json::Manipulator {
+                        let (fromkey, frommod) = keys.remove(0);
+                        rule.manipulators.push(json::Manipulator {
                             type_: "basic".into(),
                             from: json::From::conv(fromkey, frommod),
-                            to: vec![],
-                            to_if_alone: None,
-                        };
-
-                        while parts.peek().is_some() {
-                            let tokey = karaconv::conv_key(parts.next().unwrap())?;
-                            let tomod = if parts.peek().is_some() {
-                                if !parts.peek().unwrap().starts_with("Key") { Some(karaconv::conv_mod(parts.next().unwrap())?) } else { None }
-                            } else {
-                                None
-                            };
-                            manip.to.push(json::To::conv(tokey, tomod));
-                        }
-
-                        rule.manipulators.push(manip);
+                            to: keys.into_iter().map(|(k, m)| json::To::conv(k, m)).collect(),
+                            to_if_alone: vec![],
+                        });
                     }
 
                     "KeyOverlaidModifier" => {
-                        let fromkey = karaconv::conv_key(parts.next().unwrap())?;
-                        let frommod = if !parts.peek().unwrap().starts_with("Key") { Some(karaconv::conv_mod(parts.next().unwrap())?) } else { None };
-
-                        let tokey = karaconv::conv_key(parts.next().unwrap())?;
-                        let tomod = if !parts.peek().unwrap().starts_with("Key") { Some(karaconv::conv_mod(parts.next().unwrap())?) } else { None };
-
-                        let mut manip = json::Manipulator {
+                        let (fromkey, frommod) = keys.remove(0);
+                        let (tokey, tomod) = keys.remove(0);
+                        rule.manipulators.push(json::Manipulator {
                             type_: "basic".into(),
                             from: json::From::conv(fromkey, frommod),
                             to: vec![json::To::conv(tokey, tomod)],
-                            to_if_alone: None,
-                        };
-
-                        let evtkey = karaconv::conv_key(parts.next().unwrap())?;
-                        let evtmod = if parts.peek().is_some() {
-                            if !parts.peek().unwrap().starts_with("Key") { Some(karaconv::conv_mod(parts.next().unwrap())?) } else { None }
-                        } else {
-                            None
-                        };
-                        let mut to_if_alone = vec![json::To::conv(evtkey, evtmod)];
-
-                        while parts.peek().is_some() {
-                            let evtkey = karaconv::conv_key(parts.next().unwrap())?;
-                            let evtmod = if parts.peek().is_some() {
-                                if !parts.peek().unwrap().starts_with("Key") { Some(karaconv::conv_mod(parts.next().unwrap())?) } else { None }
-                            } else {
-                                None
-                            };
-                            to_if_alone.push(json::To::conv(evtkey, evtmod));
-                        }
-                        manip.to_if_alone = Some(to_if_alone);
-
-                        rule.manipulators.push(manip);
+                            to_if_alone: keys.into_iter().map(|(k, m)| json::To::conv(k, m)).collect(),
+                        });
                     }
 
                     otherwise => bail!("Unsupported autogen type: {}", otherwise)

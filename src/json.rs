@@ -44,8 +44,8 @@ pub struct Manipulator {
     pub type_: String,
     pub from: From,
     pub to: Vec<To>,
-    #[serde(skip_serializing_if="Option::is_none")]
-    pub to_if_alone: Option<Vec<To>>,
+    #[serde(skip_serializing_if="Vec::is_empty", default="Vec::new")]
+    pub to_if_alone: Vec<To>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -53,12 +53,12 @@ pub struct Manipulator {
 pub enum From {
     Key {
         key_code: String,
-        #[serde(skip_serializing_if="Option::is_none")]
+        #[serde(skip_serializing_if="no_frommods")]
         modifiers: Option<FromModifiers>,
     },
     Button {
         pointing_button: String,
-        #[serde(skip_serializing_if="Option::is_none")]
+        #[serde(skip_serializing_if="no_frommods")]
         modifiers: Option<FromModifiers>,
     },
 }
@@ -76,14 +76,22 @@ pub struct FromModifiers {
 pub enum To {
     Key {
         key_code: String,
-        #[serde(skip_serializing_if="Option::is_none")]
+        #[serde(skip_serializing_if="no_tomods")]
         modifiers: Option<Vec<String>>,
     },
     Button {
         pointing_button: String,
-        #[serde(skip_serializing_if="Option::is_none")]
+        #[serde(skip_serializing_if="no_tomods")]
         modifiers: Option<Vec<String>>,
     },
+}
+
+fn no_frommods(mods: &Option<FromModifiers>) -> bool {
+    mods.as_ref().map_or(true, |fm| fm.mandatory.is_none() && fm.optional.is_none())
+}
+
+fn no_tomods(mods: &Option<Vec<String>>) -> bool {
+    mods.as_ref().map_or(true, |v| v.is_empty())
 }
 
 pub enum KeyOrButton {
