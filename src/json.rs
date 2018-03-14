@@ -44,7 +44,7 @@ pub struct Manipulator {
     pub type_: String,
     pub from: From,
     pub to: Vec<To>,
-    #[serde(skip_serializing_if="Vec::is_empty", default="Vec::new")]
+    #[serde(skip_serializing_if="Vec::is_empty", default)]
     pub to_if_alone: Vec<To>,
 }
 
@@ -53,22 +53,28 @@ pub struct Manipulator {
 pub enum From {
     Key {
         key_code: String,
-        #[serde(skip_serializing_if="no_frommods")]
-        modifiers: Option<FromModifiers>,
+        #[serde(skip_serializing_if="FromModifiers::is_empty", default)]
+        modifiers: FromModifiers,
     },
     Button {
         pointing_button: String,
-        #[serde(skip_serializing_if="no_frommods")]
-        modifiers: Option<FromModifiers>,
+        #[serde(skip_serializing_if="FromModifiers::is_empty", default)]
+        modifiers: FromModifiers,
     },
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct FromModifiers {
-    #[serde(skip_serializing_if="Option::is_none")]
-    pub mandatory: Option<Vec<String>>,
-    #[serde(skip_serializing_if="Option::is_none")]
-    pub optional: Option<Vec<String>>,
+    #[serde(skip_serializing_if="Vec::is_empty", default)]
+    pub mandatory: Vec<String>,
+    #[serde(skip_serializing_if="Vec::is_empty", default)]
+    pub optional: Vec<String>,
+}
+
+impl FromModifiers {
+    fn is_empty(&self) -> bool {
+        self.mandatory.is_empty() && self.optional.is_empty()
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -76,22 +82,14 @@ pub struct FromModifiers {
 pub enum To {
     Key {
         key_code: String,
-        #[serde(skip_serializing_if="no_tomods")]
-        modifiers: Option<Vec<String>>,
+        #[serde(skip_serializing_if="Vec::is_empty", default)]
+        modifiers: Vec<String>,
     },
     Button {
         pointing_button: String,
-        #[serde(skip_serializing_if="no_tomods")]
-        modifiers: Option<Vec<String>>,
+        #[serde(skip_serializing_if="Vec::is_empty", default)]
+        modifiers: Vec<String>,
     },
-}
-
-fn no_frommods(mods: &Option<FromModifiers>) -> bool {
-    mods.as_ref().map_or(true, |fm| fm.mandatory.is_none() && fm.optional.is_none())
-}
-
-fn no_tomods(mods: &Option<Vec<String>>) -> bool {
-    mods.as_ref().map_or(true, |v| v.is_empty())
 }
 
 pub enum KeyOrButton {
@@ -100,46 +98,46 @@ pub enum KeyOrButton {
 }
 
 pub trait KeyOrButtonConv {
-    fn conv(key_or_button: KeyOrButton, mods: Option<Vec<String>>) -> Self;
+    fn conv(key_or_button: KeyOrButton, mods: Vec<String>) -> Self;
 }
 
 impl KeyOrButtonConv for From {
-    fn conv(key_or_button: KeyOrButton, mods: Option<Vec<String>>) -> Self {
+    fn conv(key_or_button: KeyOrButton, mods: Vec<String>) -> Self {
         match key_or_button {
             KeyOrButton::Key(s) =>
                 From::Key {
                     key_code: s,
-                    modifiers: Some(FromModifiers {
+                    modifiers: FromModifiers {
                         mandatory: mods,
-                        optional: None,
-                    }),
+                        optional: vec![],
+                    },
                 },
 
             KeyOrButton::Button(s) =>
                 From::Button {
                     pointing_button: s,
-                    modifiers: Some(FromModifiers {
+                    modifiers: FromModifiers {
                         mandatory: mods,
-                        optional: None,
-                    }),
+                        optional: vec![],
+                    },
                 },
         }
     }
 }
 
 impl KeyOrButtonConv for To {
-    fn conv(key_or_button: KeyOrButton, mods: Option<Vec<String>>) -> Self {
+    fn conv(key_or_button: KeyOrButton, mods: Vec<String>) -> Self {
         match key_or_button {
             KeyOrButton::Key(s) =>
                 To::Key {
                     key_code: s,
-                    modifiers: Some(mods.unwrap_or(vec![])),
+                    modifiers: mods,
                 },
 
             KeyOrButton::Button(s) =>
                 To::Button {
                     pointing_button: s,
-                    modifiers: Some(mods.unwrap_or(vec![])),
+                    modifiers: mods,
                 },
         }
     }

@@ -221,14 +221,14 @@ pub fn conv_mod(s: &str) -> Result<Vec<String>, Error> {
     Ok(convs)
 }
 
-pub fn collect_keys(s: &str) -> Result<Vec<(json::KeyOrButton, Option<Vec<String>>)>, Error> {
+pub fn collect_keys(s: &str) -> Result<Vec<(json::KeyOrButton, Vec<String>)>, Error> {
     let mut parts = s.split(',').map(str::trim).peekable();
     let mut keys = vec![];
 
     while let Some(thekey) = parts.next().map(conv_key).invert()? {
         let themod = parts.peeking_next(|p| !p.starts_with("Key"))
-                          .map(|p| conv_mod(p))
-                          .invert()?;
+                          .map(|p| conv_mod(p)).invert()?
+                          .unwrap_or(vec![]);
         keys.push((thekey, themod));
     }
     
