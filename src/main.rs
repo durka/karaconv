@@ -30,6 +30,10 @@ struct Opt {
     #[structopt(short="o", long="output", parse(from_os_str))]
     outfile: PathBuf,
 
+    /// Which profile to modify in the JSON
+    #[structopt(short="p", long="profile", default_value="0")]
+    profile: usize,
+
     /// Dry run
     #[structopt(short="n")]
     dry_run: bool,
@@ -83,14 +87,14 @@ fn try_main() -> Result<(), Error> {
         }
 
         let mut done = false;
-        if let Some(existing_rule) = outjson.profiles[0].complex_modifications.rules.iter_mut().find(|r| r.description == rule.description) {
+        if let Some(existing_rule) = outjson.profiles[opt.profile].complex_modifications.rules.iter_mut().find(|r| r.description == rule.description) {
             println!("replacing existing rule");
             existing_rule.manipulators = rule.manipulators.clone();
             done = true;
         }
         if !done {
             println!("adding new rule");
-            outjson.profiles[0].complex_modifications.rules.push(rule);
+            outjson.profiles[opt.profile].complex_modifications.rules.push(rule);
         }
     }
 

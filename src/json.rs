@@ -6,7 +6,7 @@ pub struct Karabiner {
     /// Some settings
     pub global: ::serde_json::Value,
 
-    /// User profiles (we always operate on the first one)
+    /// User profiles
     pub profiles: Vec<Profile>,
 }
 
