@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<root>
+    <item>
+        <name>Shifts to Parentheses</name>
+        <appendix>Shifts, when pressed alone, type parentheses.  When used with other keys they're normal shifts.</appendix>
+
+        <identifier>private.shifts_to_parens</identifier>
+
+        <!-- This is the basic mapping. -->
+        <autogen>--KeyOverlaidModifier-- KeyCode::SHIFT_R, ModifierFlag::SHIFT_R | ModifierFlag::NONE, KeyCode::SHIFT_R, KeyCode::KEY_0, ModifierFlag::SHIFT_L</autogen>
+        <autogen>--KeyOverlaidModifier-- KeyCode::SHIFT_L, ModifierFlag::SHIFT_L | ModifierFlag::NONE, KeyCode::SHIFT_L, KeyCode::KEY_9, ModifierFlag::SHIFT_R</autogen>
+
+        <!--
+            Remap the "rolls" of () and )( because it's too easy to hit one
+            before finishing the other, and there's no other reason to be
+            pressing both shift keys at once anyway
+        -->
+        <autogen>--KeyToKey-- KeyCode::SHIFT_L, ModifierFlag::SHIFT_R, KeyCode::KEY_0, ModifierFlag::SHIFT_L, KeyCode::KEY_9, ModifierFlag::SHIFT_L</autogen>
+        <autogen>--KeyToKey-- KeyCode::SHIFT_R, ModifierFlag::SHIFT_L, KeyCode::KEY_9, ModifierFlag::SHIFT_L, KeyCode::KEY_0, ModifierFlag::SHIFT_L</autogen>
+
+        <!--
+            Remap Rshift+Space to ') ', because when typing an end paren and
+            then a space I tend to hit space before I let go of rshift.
+        -->
+        <autogen>--KeyToKey-- KeyCode::SPACE, ModifierFlag::SHIFT_R, KeyCode::KEY_0, ModifierFlag::SHIFT_L, KeyCode::SPACE</autogen>
+    </item>
+
+    <item>
+        <name>Mouse rocker spaceflight</name>
+        <appendix>Rocking the mouse wheel side to side changes to the adjacent Space.</appendix>
+
+        <identifier>private.spaceflight</identifier>
+
+        <autogen>--KeyToKey-- PointingButton::BUTTON4, KeyCode::CURSOR_RIGHT, VK_CONTROL</autogen>
+        <autogen>--KeyToKey-- PointingButton::BUTTON5, KeyCode::CURSOR_LEFT, VK_CONTROL</autogen>
+    </item>
+
+    <item>
+        <name>Keynote mouse</name>
+        <appendix>Various remappings to use my wireless mouse as a Keynote remote.</appendix>
+
+        <identifier>private.keynote</identifier>
+
+        <!-- Built in:
+                - left click = next build
+                - right click = beginning of slide/previous slide
+        -->
+        <autogen>--KeyToKey-- PointingButton::BUTTON4, KeyCode::BRACKET_LEFT</autogen> <!-- Previous build -->
+        <autogen>--KeyToKey-- PointingButton::BUTTON5, KeyCode::BRACKET_RIGHT</autogen> <!-- Next build, no animation -->
+        <autogen>--KeyToKey-- PointingButton::MIDDLE, KeyCode::CURSOR_DOWN, ModifierFlag::SHIFT_R</autogen> <!-- Next slide -->
+    </item>
+
+    <item>
+        <name>LaTeX Keyboard</name>
+        <appendix>With Control_L as a modifier, overlay all the alphabetic keys with characters useful for LaTeX (and programming in general).</appendix>
+
+        <identifier>private.latex_keyboard</identifier>
+
+        <!-- the basic trick: CONTROL_L+key => CONTROL_R+key, but CONTROL_L => ESCAPE -->
+        <!-- also Return sends CONTROL_R+key, but RETURN alone -->
+        <autogen>--KeyOverlaidModifier-- KeyCode::CONTROL_L, KeyCode::CONTROL_R, KeyCode::CONTROL_R</autogen>
+        <autogen>--KeyOverlaidModifier-- KeyCode::RETURN, KeyCode::CONTROL_R, KeyCode::RETURN</autogen>
+        <autogen>--KeyToKey-- KeyCode::OPTION_L, KeyCode::CONTROL_L</autogen>
+        <!-- keys from http://www.autohotkey.com/community/viewtopic.php?t=18536 -->
+        <autogen>--KeyToKey-- KeyCode::QUOTE, ModifierFlag::CONTROL_R, KeyCode::QUOTE, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::SPACE, ModifierFlag::CONTROL_R, KeyCode::SPACE</autogen>
+        <autogen>--KeyToKey-- KeyCode::DELETE, ModifierFlag::CONTROL_R, KeyCode::DELETE</autogen>
+        <autogen>--KeyToKey-- KeyCode::Q, ModifierFlag::CONTROL_R, KeyCode::KEY_1, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::W, ModifierFlag::CONTROL_R, KeyCode::KEY_2, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::E, ModifierFlag::CONTROL_R, KeyCode::COMMA, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::R, ModifierFlag::CONTROL_R, KeyCode::BRACKET_LEFT</autogen>
+        <autogen>--KeyToKey-- KeyCode::T, ModifierFlag::CONTROL_R, KeyCode::KEY_4, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::Y, ModifierFlag::CONTROL_R, KeyCode::QUOTE</autogen>
+        <autogen>--KeyToKey-- KeyCode::U, ModifierFlag::CONTROL_R, KeyCode::BRACKET_RIGHT</autogen>
+        <autogen>--KeyToKey-- KeyCode::I, ModifierFlag::CONTROL_R, KeyCode::DOT, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::O, ModifierFlag::CONTROL_R, KeyCode::MINUS, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::P, ModifierFlag::CONTROL_R, KeyCode::BACKQUOTE</autogen>
+        <autogen>--KeyToKey-- KeyCode::A, ModifierFlag::CONTROL_R, KeyCode::KEY_5, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::S, ModifierFlag::CONTROL_R, KeyCode::KEY_9, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::D, ModifierFlag::CONTROL_R, KeyCode::BRACKET_LEFT, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::F, ModifierFlag::CONTROL_R, KeyCode::EQUAL</autogen>
+        <autogen>--KeyToKey-- KeyCode::G, ModifierFlag::CONTROL_R, KeyCode::KEY_8, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::H, ModifierFlag::CONTROL_R, KeyCode::EQUAL, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::J, ModifierFlag::CONTROL_R, KeyCode::BACKSLASH</autogen>
+        <autogen>--KeyToKey-- KeyCode::K, ModifierFlag::CONTROL_R, KeyCode::BRACKET_RIGHT, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::L, ModifierFlag::CONTROL_R, KeyCode::KEY_0, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::SEMICOLON, ModifierFlag::CONTROL_R, KeyCode::SEMICOLON, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::X, ModifierFlag::CONTROL_R, KeyCode::SLASH</autogen>
+        <autogen>--KeyToKey-- KeyCode::C, ModifierFlag::CONTROL_R, KeyCode::KEY_6, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::V, ModifierFlag::CONTROL_R, KeyCode::KEY_7, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::B, ModifierFlag::CONTROL_R, KeyCode::KEY_3, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::N, ModifierFlag::CONTROL_R, KeyCode::QUOTE, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::M, ModifierFlag::CONTROL_R, KeyCode::MINUS</autogen>
+        <autogen>--KeyToKey-- KeyCode::COMMA, ModifierFlag::CONTROL_R, KeyCode::BACKSLASH, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::DOT, ModifierFlag::CONTROL_R, KeyCode::BACKQUOTE, ModifierFlag::SHIFT_R</autogen>
+        <autogen>--KeyToKey-- KeyCode::SLASH, ModifierFlag::CONTROL_R | ModifierFlag::SHIFT_L, KeyCode::KEY_2, ModifierFlag::OPTION_L, KeyCode::E, ModifierFlag::OPTION_L, KeyCode::KEY_1, ModifierFlag::OPTION_L, KeyCode::KEY_8, ModifierFlag::OPTION_L</autogen>
+        <autogen>--KeyToKey-- KeyCode::SLASH, ModifierFlag::CONTROL_R | ModifierFlag::SHIFT_R, KeyCode::KEY_2, ModifierFlag::OPTION_L, KeyCode::E, ModifierFlag::OPTION_L, KeyCode::KEY_1, ModifierFlag::OPTION_L, KeyCode::KEY_8, ModifierFlag::OPTION_L</autogen>
+        <autogen>--KeyToKey-- KeyCode::SLASH, ModifierFlag::CONTROL_R, KeyCode::KEY_2, ModifierFlag::OPTION_L, KeyCode::KEY_0, ModifierFlag::OPTION_L, KeyCode::KEY_3, ModifierFlag::OPTION_L, KeyCode::D, ModifierFlag::OPTION_L</autogen>
+        <autogen>--KeyToKey-- KeyCode::BRACKET_RIGHT, ModifierFlag::CONTROL_R, KeyCode::KEY_2, ModifierFlag::OPTION_L, KeyCode::KEY_7, ModifierFlag::OPTION_L, KeyCode::KEY_1, ModifierFlag::OPTION_L, KeyCode::KEY_3, ModifierFlag::OPTION_L</autogen>
+        <autogen>--KeyToKey-- KeyCode::BACKSLASH, ModifierFlag::CONTROL_R, KeyCode::KEY_2, ModifierFlag::OPTION_L, KeyCode::KEY_7, ModifierFlag::OPTION_L, KeyCode::KEY_1, ModifierFlag::OPTION_L, KeyCode::KEY_7, ModifierFlag::OPTION_L</autogen>
+    </item>
+
+</root>
