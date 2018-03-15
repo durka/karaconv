@@ -32,6 +32,8 @@ fn it_works_() -> Result<(), Error>{
     fn run_jq(from: &Path, to: &Path) -> Result<PathBuf, Error> {
         let out = String::from_utf8(
             Command::new("jq")
+                    // this incantation comes from https://stackoverflow.com/a/31933234/1114328
+                    // it normalizes the JSON file by sorting, so we can do an order-less diff later
                     .arg("--argfile").arg("a").arg(from)
                     .arg("-n").arg("def post_recurse(f): def r: (f | select(. != null) | r), .; r; def post_recurse: post_recurse(.[]?); ($a | (post_recurse | arrays) |= sort) as $a | $a")
                     .output()?.stdout)?;
