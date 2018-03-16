@@ -1,7 +1,7 @@
 [package]
 name = "karaconv"
-version = "0.2.2"
-authors = ["Alex Burka <aburka@seas.upenn.edu>"]
+version = "0.3.0"
+authors = ["Alex Burka <rust@alexburka.com>"]
 
 description = "Converter from Karabiner to Karabiner-Elements configuration format"
 categories = ["command-line-utilities"]
@@ -27,4 +27,7 @@ structopt = "0.2.5"
 
 [dev-dependencies]
 tempdir = "0.3.6"
+# non-rust testing dependencies:
+# - jq >= 1.5 (github stedolan/jq)
+# - diff (the unix utility)
 
