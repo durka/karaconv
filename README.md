@@ -1,5 +1,7 @@
 # karaconv
 
+[![Travis CI](https://travis-ci.org/durka/karaconv.svg)](https://travis-ci.org/durka/karaconv)
+
 Karabiner was a very flexible keyboard/mouse remapping program that ran on macOS up to 10.11. Karabiner-Elements is its replacement, and it does mostly the same thing. But there was no way to migrate your old configuration. Until now.
 
 This program converts configuration files from Karabiner (`private.xml`) to Karabiner-Elements (`karabiner.json`).
@@ -14,7 +16,9 @@ If you try `karaconv` and it can't parse your `private.xml`, please post an issu
 
 ## Installation
 
-TODO...
+If you have Rust and Cargo installed, you can simply run `cargo install karaconv`.
+
+Otherwise, you can download the binary from the [Releases tab](https://github.com/durka/karaconv/releases).
 
 ## Usage
 

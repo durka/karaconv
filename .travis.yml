@@ -6,18 +6,25 @@ rust:
     - beta
     - nightly
 
+env:
+    global:
+        - secure: Ii9msXV8oBUtu95dRnuNln2NSopeHSWwvXcy6vuUfkx2XOvcfjjlb02stReA1sYdLddiZ+U0qQ2EKivlOg5lkVX6oe9BSxIEeiTqys81unNlLlAKsm/5D45HaqZU0nxnVH9N5PqlV0m4T2lvIqEkWOgyUeyMbsCDal89zDAQLKX7y0GuoVX9oZL5Imb/QBx9jc2mJNQnivSU7PDMptFJNSfdzsSaGeLYOVvW5teZTS5c/DZzrSMB98WMaVnf6mcA+1ucgzZPYMV/Wgu9V1afPORfex2FZeVSZqbJwW7NrPx035iiN+0uBUgES+2BYXcZC0eeB5OLpuhJpZrL5NXcm74is5PN5XSd60WS5xPG6p1enQ9F8oKMXJkFmIbdOQ2R9EARnd4tSfTyMFagH0mYjC2lozzT9VU3Wlr/7XFYbWfsd4ZbvLeRP4Qys9JDqL8pXRLmW36X7T1Wb4x/cl1DfoczCnKem9+SeDhvVW1GyUrBZAWMHgTkSAiNhvmzjUJWHueGMjDc/RVmjEpqPDQ7YikDEYlzNk5qziUy4y0duRTNT1w4UOBA4PjIcbefVYs/qKvqLn1qaY4NJypuidUYwXK141PKw9vJ+/PBVd8yarEiodAKCsbYCc1h4SJXWu95r81dET91JTtU3GHHDaqaurJxB1jlgj8CgmLWF096ta8=
+
 before_script:
-    brew install jq
+    - brew install jq
 
 before_deploy:
-    cargo build --release
+    - cargo build --release
+    - cargo publish
+
 deploy:
     api_key:
         secure: MoFvAfSrKG78ptotHDwc7s0eh7tTV4j2ejPhWpgUqUUodGCMyQ5Pu9K7MTwPDKJd960/6dUkwSgtr4V/nU+WssdSTEL458IHliJW8KNKbe54EjNGLPYlGxfdwQAfC1j5ZDnIY/SLLQUfFu0RHBtCyXx+NC4xsmt7ZoAaLTV9nQ9pLXsuqJK1ukJIdaqi6sRHAbsLbIwc5ykz2Pow2D5VEBRimSBesYsKDHXtizhpIsm7f131lr9tDxzfa532XumzDqJhB5UdBVOfej8En8HDKdoW86d/bDbPsyOTbF/7XJyaPEKjzkOm0q+EgG3Z3esxMi9DMRuyVmRelVCsmxZUU1r6pHpRC3wDbJqxnch0KSUej3znwnmF1DcJLQa2LKTxZktlgdQ6xdAb+dsWgCQMtW9BsD6ioeoUlG7E9NVT9Iw9BidROTw7NztiYHj9Sd96SEdCV4xlKXLl4MJzB7URdHIpEhHQHBCoMXzksIAfTlVbU2EXO9rUUtLMRJbiSi5I3DRHHVAc23qzyjVl3SA+kEfACdZJn83mbiFNOxeJZx1/Tuw2CjzyoVEcDWuTSCZXJFO3Im7+4NpN8KRMYaKBtGqwPW5oq7ST/1uWxJSSu/ngTKxCV5U2RR9pOxDZsoey6yiJgZfe0C3HqiHYkHsBhKe/IJzkzLcog5VenHylXzo=
-    file_glob: true
-    file: target/release/karaconv
-    on:
-        condition: $TRAVIS_RUST_VERSION = stable
-        tags: true
-    provider: releases
-    skip_cleanup: true
+        file_glob: true
+        file: target/release/karaconv
+        on:
+            condition: "$TRAVIS_RUST_VERSION = stable"
+            tags: true
+            provider: releases
+            skip_cleanup: true
+
