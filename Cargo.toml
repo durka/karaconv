@@ -1,7 +1,17 @@
 [package]
 name = "karaconv"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Alex Burka <aburka@seas.upenn.edu>"]
+
+description = "Converter from Karabiner to Karabiner-Elements configuration format"
+categories = ["command-line-utilities"]
+keywords = ["karabiner"]
+repository = "https://github.com/durka/karaconv"
+readme = "README.md"
+license = "MIT"
+
+[badges]
+travis-ci = { repository = "durka/karaconv" }
 
 [dependencies]
 chrono = "0.4.0"
