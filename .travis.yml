@@ -5,7 +5,7 @@ rust:
     - beta
     - nightly
 before_script:
-    # install jq
+    apt-get install jq
 after_success:
     # release build?
 
