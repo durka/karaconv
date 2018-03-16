@@ -1,0 +1,11 @@
+language: rust
+cache: cargo
+rust:
+    - stable
+    - beta
+    - nightly
+before_script:
+    # install jq
+after_success:
+    # release build?
+
