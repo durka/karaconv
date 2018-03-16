@@ -4,8 +4,19 @@ rust:
     - stable
     - beta
     - nightly
+
 before_script:
     sudo apt-get install jq
-after_success:
-    # release build?
 
+before_deploy:
+    cargo build --release
+deploy:
+    api_key:
+        secure: MoFvAfSrKG78ptotHDwc7s0eh7tTV4j2ejPhWpgUqUUodGCMyQ5Pu9K7MTwPDKJd960/6dUkwSgtr4V/nU+WssdSTEL458IHliJW8KNKbe54EjNGLPYlGxfdwQAfC1j5ZDnIY/SLLQUfFu0RHBtCyXx+NC4xsmt7ZoAaLTV9nQ9pLXsuqJK1ukJIdaqi6sRHAbsLbIwc5ykz2Pow2D5VEBRimSBesYsKDHXtizhpIsm7f131lr9tDxzfa532XumzDqJhB5UdBVOfej8En8HDKdoW86d/bDbPsyOTbF/7XJyaPEKjzkOm0q+EgG3Z3esxMi9DMRuyVmRelVCsmxZUU1r6pHpRC3wDbJqxnch0KSUej3znwnmF1DcJLQa2LKTxZktlgdQ6xdAb+dsWgCQMtW9BsD6ioeoUlG7E9NVT9Iw9BidROTw7NztiYHj9Sd96SEdCV4xlKXLl4MJzB7URdHIpEhHQHBCoMXzksIAfTlVbU2EXO9rUUtLMRJbiSi5I3DRHHVAc23qzyjVl3SA+kEfACdZJn83mbiFNOxeJZx1/Tuw2CjzyoVEcDWuTSCZXJFO3Im7+4NpN8KRMYaKBtGqwPW5oq7ST/1uWxJSSu/ngTKxCV5U2RR9pOxDZsoey6yiJgZfe0C3HqiHYkHsBhKe/IJzkzLcog5VenHylXzo=
+    file_glob: true
+    file: target/release/karaconv
+    on:
+        condition: $TRAVIS_RUST_VERSION = stable
+        tags: true
+    provider: releases
+    skip_cleanup: true
