@@ -7,7 +7,7 @@ rust:
     - nightly
 
 before_script:
-    sudo apt-get install jq
+    brew install jq
 
 before_deploy:
     cargo build --release
