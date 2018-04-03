@@ -9,7 +9,7 @@ This program converts configuration files from Karabiner (`private.xml`) to Kara
 Caveats:
 
 - The format of `private.xml` is documented, but it is sometimes vague or inconsistent
-- The format of `karabiner.json` is completely undocumented
+- The format of `karabiner.json` is ~~completely undocumented~~ documented in a place I did not know about
 - Taking the above two points under consideration, I wrote this tool by looking at the docs, my own configuration, and guessing, and I stopped when it was powerful enough to parse my own `private.xml`. It doesn't support the entire format.
 
 If you try `karaconv` and it can't parse your `private.xml`, please post an issue (or pull request)!
